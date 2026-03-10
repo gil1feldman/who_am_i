@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>מי אני בכנסת?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Noto+Sans+Hebrew:wght@400;600;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep:   #060d1f;
+  --bg-mid:    #0d1e3f;
+  --bg-card:   #111f45;
+  --gold:      #c9a84c;
+  --gold-dim:  rgba(201,168,76,0.15);
+  --gold-line: rgba(201,168,76,0.35);
+  --blue-bright: #3b82f6;
+  --text-main: #e8eef8;
+  --text-mute: #5d7a9e;
+  --text-soft: #9ab0cc;
+  --for-color:     #22c55e;
+  --against-color: #ef4444;
+  --abstain-color: #f59e0b;
+  --for-bg:     rgba(34,197,94,0.12);
+  --against-bg: rgba(239,68,68,0.12);
+  --abstain-bg: rgba(245,158,11,0.1);
+}
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg-deep);
+  font-family: 'Frank Ruhl Libre', 'Noto Sans Hebrew', Georgia, serif;
+  color: var(--text-main);
+  direction: rtl;
+  overflow-x: hidden;
+  min-height: 100dvh;
+}
+
+/* ── noise texture overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59,130,246,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(201,168,76,0.06) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 200px 200px;
+}
+
+#app { position: relative; z-index: 1; min-height: 100dvh; }
+
+/* ══════════════════ SCREENS ══════════════════ */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; min-height: 100dvh; }
+
+.center-screen {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px 20px; text-align: center; gap: 16px;
+}
+
+/* ══════════════════ SPINNER ══════════════════ */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(201,168,76,0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+/* ══════════════════ HOME ══════════════════ */
+.home-inner {
+  max-width: 540px; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+
+.home-emblem {
+  font-size: 64px; line-height: 1;
+  filter: drop-shadow(0 0 24px rgba(201,168,76,0.4));
+  margin-bottom: 12px;
+}
+
+.home-eyebrow {
+  font-size: 10px; letter-spacing: 5px; font-family: monospace;
+  color: var(--gold); border: 1px solid var(--gold-line);
+  padding: 3px 18px; border-radius: 2px; margin-bottom: 14px;
+}
+
+.home-title {
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 900; line-height: 1.05;
+  color: #fff;
+  text-shadow: 0 0 60px rgba(201,168,76,0.25);
+  margin-bottom: 8px;
+}
+
+.home-sub {
+  font-size: 15px; color: var(--text-soft); line-height: 1.6;
+  max-width: 380px; margin-bottom: 28px;
+}
+
+.divider-gold {
+  width: 48px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 28px;
+}
+
+.home-how {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  margin-bottom: 28px;
+  text-align: right;
+}
+
+.how-row {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.how-icon { font-size: 20px; flex-shrink: 0; padding-top: 1px; }
+.how-text { font-size: 13px; color: var(--text-soft); line-height: 1.6; }
+.how-text strong { color: var(--text-main); }
+
+.btn-start {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, #1a3a80, #2563eb);
+  border: none; border-radius: 14px;
+  color: #fff; font-size: 17px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(37,99,235,0.45); }
+.btn-start:active { transform: scale(0.97); }
+
+/* ══════════════════ VOTE SCREEN ══════════════════ */
+#screen-vote {
+  height: 100dvh; overflow: hidden;
+}
+
+.vote-wrap {
+  width: 100%; max-width: 560px; margin: 0 auto;
+  padding: 12px 14px 8px;
+  display: flex; flex-direction: column;
+  height: 100%; overflow: hidden;
+}
+
+/* Top bar */
+.vote-topbar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px; flex-shrink: 0;
+}
+.vote-counter {
+  font-size: 11px; font-family: monospace; letter-spacing: 1px;
+  color: var(--text-mute);
+}
+.vote-progress-track {
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden;
+}
+.vote-progress-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #166534, #22c55e);
+  transition: width 0.4s ease;
+}
+
+/* The vote card */
+.vote-card {
+  flex: 1; display: flex; flex-direction: column;
+  background: linear-gradient(160deg, #0e1e45, #0a1530);
+  border: 1.5px solid var(--gold-line);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.08);
+  padding: 20px 18px 16px;
+  gap: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.vote-card.animate-in { animation: cardSlideIn 0.3s cubic-bezier(0.34,1.4,0.64,1); }
+
+.vote-num-badge {
+  display: inline-block; align-self: flex-end;
+  font-size: 10px; font-family: monospace; letter-spacing: 2px;
+  color: rgba(201,168,76,0.45); margin-bottom: 14px;
+}
+
+.vote-topic-label {
+  font-size: 9px; letter-spacing: 3px; font-family: monospace;
+  color: rgba(201,168,76,0.5); margin-bottom: 7px;
+  text-align: center;
+}
+
+.vote-topic-title {
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 800; line-height: 1.4;
+  color: #fff; text-align: center;
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 10px 0;
+}
+
+.vote-topic-meta {
+  display: flex; justify-content: center; gap: 10px;
+  margin-top: 8px; margin-bottom: 4px; flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-size: 11px; padding: 2px 11px; border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: var(--text-mute);
+}
+
+/* Buttons */
+.vote-btns {
+  display: flex; gap: 10px; padding: 10px 0 2px;
+  flex-shrink: 0;
+}
+.vbtn {
+  flex: 1; padding: 14px 8px;
+  border: 1.5px solid; border-radius: 14px;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.14s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.vbtn:active { transform: scale(0.93); }
+.vbtn-label { font-size: 11px; font-weight: 600; opacity: 0.75; }
+.vbtn-for     { background: var(--for-bg);     border-color: rgba(34,197,94,0.4);  color: #86efac; }
+.vbtn-abstain { background: var(--abstain-bg);  border-color: rgba(245,158,11,0.35); color: #fde68a; }
+.vbtn-against { background: var(--against-bg); border-color: rgba(239,68,68,0.4);  color: #fca5a5; }
+.vbtn-for:hover     { background: rgba(34,197,94,0.22);  border-color: var(--for-color); }
+.vbtn-abstain:hover { background: rgba(245,158,11,0.2);  border-color: var(--abstain-color); }
+.vbtn-against:hover { background: rgba(239,68,68,0.22); border-color: var(--against-color); }
+
+/* Tap feedback flash */
+@keyframes tapFlash {
+  0%   { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+.tap-flash {
+  position: fixed; inset: 0; z-index: 50; pointer-events: none;
+  opacity: 0;
+}
+.tap-flash.for-flash     { background: rgba(34,197,94,0.1); }
+.tap-flash.against-flash { background: rgba(239,68,68,0.1); }
+.tap-flash.abstain-flash { background: rgba(245,158,11,0.08); }
+.tap-flash.active { animation: tapFlash 0.4s ease forwards; }
+
+/* ══════════════════ RESULTS SCREEN ══════════════════ */
+#screen-results {
+  overflow-y: auto;
+}
+
+.results-wrap {
+  max-width: 580px; width: 100%; margin: 0 auto;
+  padding: 28px 16px 40px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+.results-header { text-align: center; }
+.results-title {
+  font-size: clamp(26px,7vw,40px); font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(201,168,76,0.35);
+  margin-bottom: 6px;
+}
+.results-sub { font-size: 14px; color: var(--text-soft); }
+
+/* MK match cards */
+.mk-cards { display: flex; flex-direction: column; gap: 12px; }
+
+@keyframes mkCardIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mk-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px; overflow: hidden;
+  animation: mkCardIn 0.4s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.mk-card:nth-child(1) { animation-delay: 0.05s; border-color: rgba(201,168,76,0.4); }
+.mk-card:nth-child(2) { animation-delay: 0.12s; }
+.mk-card:nth-child(3) { animation-delay: 0.19s; }
+.mk-card:nth-child(4) { animation-delay: 0.26s; }
+.mk-card:nth-child(5) { animation-delay: 0.33s; }
+
+.mk-card-top {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px 14px;
+}
+.mk-rank {
+  font-size: 22px; font-weight: 900; font-family: monospace;
+  color: var(--gold); flex-shrink: 0; width: 28px; text-align: center;
+}
+.mk-rank.top1 { color: #fde68a; text-shadow: 0 0 12px rgba(253,230,138,0.5); }
+
+.mk-avatar {
+  width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #1a3580, #2563eb);
+  border: 2px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+
+.mk-info { flex: 1; min-width: 0; }
+.mk-name-big { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+.mk-faction-tag {
+  display: inline-block; margin-top: 4px;
+  font-size: 11px; padding: 1px 10px; border-radius: 20px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-soft);
+}
+
+.mk-match-score {
+  text-align: center; flex-shrink: 0;
+}
+.match-pct {
+  font-size: 26px; font-weight: 900; font-family: monospace;
+  color: var(--for-color); line-height: 1;
+}
+.match-pct.pct-mid { color: var(--abstain-color); }
+.match-pct.pct-low { color: var(--text-soft); }
+.match-count { font-size: 11px; color: var(--text-mute); margin-top: 2px; }
+
+/* Match bar */
+.mk-match-bar-wrap {
+  height: 4px; background: rgba(255,255,255,0.06);
+  margin: 0 18px 14px;
+}
+.mk-match-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #166534, #22c55e);
+  transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1);
+}
+.mk-match-bar-fill.mid { background: linear-gradient(90deg, #92400e, #f59e0b); }
+.mk-match-bar-fill.low { background: linear-gradient(90deg, #374151, #6b7280); }
+
+/* Votes breakdown accordion */
+.mk-votes-toggle {
+  width: 100%; background: transparent; border: none; border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 18px; color: var(--text-mute); font-size: 12px; font-family: inherit;
+  cursor: pointer; text-align: right; display: flex; align-items: center; justify-content: space-between;
+}
+.mk-votes-toggle:hover { color: var(--text-soft); }
+.toggle-arrow { transition: transform 0.25s; font-size: 10px; }
+.toggle-arrow.open { transform: rotate(180deg); }
+
+.mk-votes-detail {
+  display: none; padding: 10px 18px 14px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.mk-votes-detail.open { display: block; }
+
+.vote-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 10px;
+}
+.vote-row:last-child { border-bottom: none; }
+.vote-row-topic { font-size: 12px; color: var(--text-soft); flex: 1; line-height: 1.4; }
+.vote-row-badges {
+  display: flex; gap: 5px; flex-shrink: 0; align-items: center;
+}
+.badge-vote {
+  font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+  font-family: monospace;
+}
+.badge-for     { background: var(--for-bg);     color: #86efac; border: 1px solid rgba(34,197,94,0.25); }
+.badge-against { background: var(--against-bg); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+.badge-abstain { background: var(--abstain-bg); color: #fde68a; border: 1px solid rgba(245,158,11,0.2); }
+.badge-missing { background: rgba(255,255,255,0.04); color: var(--text-mute); border: 1px solid rgba(255,255,255,0.08); }
+.match-dot { font-size: 13px; }
+
+/* Summary box */
+.my-summary {
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 16px; padding: 18px 20px;
+}
+.my-summary-title {
+  font-size: 12px; letter-spacing: 2px; font-family: monospace;
+  color: rgba(201,168,76,0.6); margin-bottom: 12px;
+}
+.my-votes-grid {
+  display: flex; flex-direction: column; gap: 7px;
+}
+.my-vote-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.my-vote-topic { font-size: 12px; color: var(--text-soft); flex: 1; line-height: 1.4; }
+.my-vote-badge { font-size: 11px; font-weight: 700; padding: 2px 11px; border-radius: 20px; font-family: monospace; }
+
+/* Action buttons */
+.result-btns { display: flex; gap: 10px; }
+.btn-secondary {
+  flex: 1; padding: 13px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; color: var(--text-soft);
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.14s;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.btn-primary {
+  flex: 1; padding: 13px;
+  background: linear-gradient(135deg, #1a3a80, #2563eb);
+  border: none; border-radius: 12px; color: #fff;
+  font-family: inherit; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all 0.14s;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(37,99,235,0.4); }
+
+.whatsapp-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #128C7E, #25D366);
+  border: none; border-radius: 12px; color: #fff;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.14s;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.25);
+}
+.whatsapp-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(37,211,102,0.35); }
+
+/* Error */
+.error-box {
+  max-width: 380px; background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.25); border-radius: 12px;
+  padding: 14px 18px; color: #fca5a5; font-size: 13px; line-height: 1.7;
+  font-family: monospace;
+}
+.btn-retry {
+  padding: 11px 28px; background: linear-gradient(135deg, #1d3f8f, #2563eb);
+  border: none; border-radius: 10px; color: #fff;
+  font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+
+/* Loading text */
+.load-msg { color: var(--text-mute); font-size: 13px; font-family: monospace; }
+
+/* ══════════════════ ORIENTATION SCREEN ══════════════════ */
+.orient-inner {
+  max-width: 480px; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.orient-question {
+  font-size: clamp(20px, 5vw, 28px); font-weight: 800;
+  color: #fff; text-align: center; line-height: 1.4;
+  margin-bottom: 8px;
+}
+.orient-sub {
+  font-size: 13px; color: var(--text-mute); margin-bottom: 28px;
+}
+.orient-options {
+  width: 100%; display: flex; flex-direction: column; gap: 10px;
+}
+.orient-btn {
+  width: 100%; padding: 14px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; color: var(--text-main);
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; text-align: right;
+  transition: all 0.14s; display: flex; align-items: center; gap: 12px;
+}
+.orient-btn:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateX(-2px);
+}
+.orient-btn:active { transform: scale(0.97); }
+.orient-btn.selected {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  color: #fff;
+}
+.orient-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-left        { background: #3b82f6; }
+.dot-center-left { background: #818cf8; }
+.dot-center      { background: #a78bfa; }
+.dot-center-right{ background: #f97316; }
+.dot-right       { background: #ef4444; }
+.dot-skip        { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- LOADING -->
+  <div id="screen-loading" class="screen active">
+    <div class="center-screen">
+      <div style="font-size:56px;filter:drop-shadow(0 0 20px rgba(201,168,76,0.4))">🏛️</div>
+      <div style="color:var(--gold);font-size:20px;font-weight:800">מי אני בכנסת?</div>
+      <div class="spinner"></div>
+      <div id="load-msg" class="load-msg">טוען נתונים…</div>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="screen-error" class="screen">
+    <div class="center-screen">
+      <div style="font-size:48px">⚠️</div>
+      <div style="color:#f87171;font-size:18px;font-weight:700">שגיאה בטעינה</div>
+      <div id="error-msg" class="error-box"></div>
+      <button class="btn-retry" onclick="loadData(true)">🔄 נסה שוב</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen">
+    <div class="center-screen">
+      <div class="home-inner">
+        <div class="home-emblem">🏛️</div>
+        <div class="home-eyebrow">כנסת ישראל</div>
+        <h1 class="home-title">מי אני<br>בכנסת?</h1>
+        <p class="home-sub">ענו על שאלות הצבעה וגלו אילו חברי כנסת מצביעים כמוכם</p>
+        <div class="divider-gold"></div>
+
+        <div class="home-how">
+          <div class="how-row">
+            <div class="how-icon">📋</div>
+            <div class="how-text">מוצגות לכם <strong>שאלות הצבעה</strong> מהכנסת — ענו על כל אחת</div>
+          </div>
+          <div class="how-row">
+            <div class="how-icon">🗳️</div>
+            <div class="how-text">בחרו <strong>בעד / נגד / נמנע</strong> לכל נושא</div>
+          </div>
+          <div class="how-row">
+            <div class="how-icon">🔍</div>
+            <div class="how-text">בסוף תראו <strong>אילו ח"כים</strong> הכי דומים לכם</div>
+          </div>
+        </div>
+
+        <button class="btn-start" id="btn-start" onclick="showScreen('orient')">
+          התחל ▶
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORIENTATION -->
+  <div id="screen-orient" class="screen">
+    <div class="center-screen">
+      <div class="orient-inner">
+        <div style="font-size:44px;margin-bottom:16px">🧭</div>
+        <div class="orient-question">איך את/ה מגדי/ר את עצמך?</div>
+        <div class="orient-sub">זה לא ישפיע על התוצאות — סתם סקרנות</div>
+        <div class="orient-options">
+          <button class="orient-btn" onclick="selectOrientation('שמאל')">
+            <span class="orient-dot dot-left"></span> שמאל
+          </button>
+          <button class="orient-btn" onclick="selectOrientation('שמאל-מרכז')">
+            <span class="orient-dot dot-center-left"></span> שמאל-מרכז
+          </button>
+          <button class="orient-btn" onclick="selectOrientation('מרכז')">
+            <span class="orient-dot dot-center"></span> מרכז
+          </button>
+          <button class="orient-btn" onclick="selectOrientation('ימין-מרכז')">
+            <span class="orient-dot dot-center-right"></span> ימין-מרכז
+          </button>
+          <button class="orient-btn" onclick="selectOrientation('ימין')">
+            <span class="orient-dot dot-right"></span> ימין
+          </button>
+          <button class="orient-btn" onclick="selectOrientation(null)" style="color:var(--text-mute);font-size:13px">
+            <span class="orient-dot dot-skip"></span> לא מעוניינ/ת לענות
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOTE -->
+  <div id="screen-vote" class="screen">
+    <div class="vote-wrap">
+      <div class="vote-topbar">
+        <span class="vote-counter" id="vote-counter">1 / 10</span>
+        <div class="vote-progress-track">
+          <div class="vote-progress-fill" id="vote-progress" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="vote-card" id="vote-card">
+        <span class="vote-num-badge" id="vote-num-badge">הצבעה #1</span>
+        <div class="vote-topic-label">על מה מצביעים?</div>
+        <div class="vote-topic-title" id="vote-topic-title">—</div>
+        <div class="vote-topic-meta" id="vote-topic-meta"></div>
+
+        <div style="flex:1"></div>
+
+        <div class="vote-btns">
+          <button class="vbtn vbtn-against" onclick="castVote('against')">
+            <span>✗</span>
+            <span class="vbtn-label">נגד</span>
+          </button>
+          <button class="vbtn vbtn-abstain" onclick="castVote('abstain')">
+            <span>↕</span>
+            <span class="vbtn-label">נמנע</span>
+          </button>
+          <button class="vbtn vbtn-for" onclick="castVote('for')">
+            <span>✓</span>
+            <span class="vbtn-label">בעד</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="screen-results" class="screen">
+    <div class="results-wrap">
+      <div class="results-header">
+        <div class="results-title">התוצאות שלך 🏛️</div>
+        <div class="results-sub" id="results-sub">הנה חברי הכנסת שמצביעים הכי דומה לך</div>
+      </div>
+
+      <div class="mk-cards" id="mk-cards"></div>
+
+      <div class="my-summary" id="my-summary"></div>
+
+      <div class="result-btns">
+        <button class="btn-secondary" onclick="showHome()">🏠 בית</button>
+        <button class="btn-primary"   onclick="showScreen('orient')">🔄 שחק שוב</button>
+      </div>
+
+      <button class="whatsapp-btn" id="whatsapp-btn">📲 שתף בוואטסאפ</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="tap-flash" id="tap-flash"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7mtU_4w7tz6Iz4VPAkO5eUdEnil2PsiLpo17zscAJNxMJml7p5qBr9wJifIgiYlpy/exec";
+const API_BASES = [
+  "https://www.knesset.gov.il",
+  "https://knesset.gov.il",
+  "https://main.knesset.gov.il",
+];
+const DETAIL_PATH = "/WebSiteApi/knessetapi/Votes/GetVoteDetails/";
+const CACHE_KEY   = "knesset-match-cache-v1";
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function readCache()   { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || "{}"); } catch { return {}; } }
+function writeCache(d) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch {} }
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen-" + id).classList.add("active");
+}
+
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+let allGames = [];
+
+function normalizeVote(t) {
+  if (!t) return null;
+  const s = t.trim();
+  if (s === "בעד")  return "for";
+  if (s === "נגד")  return "against";
+  if (s === "נמנע" || s === "נמנע/נעדר" || s === "נעדר") return "abstain";
+  return null;
+}
+
+async function fetchSheetRows() {
+  const resp = await fetch(APPS_SCRIPT_URL);
+  const data = await resp.json();
+  if (!Array.isArray(data)) throw new Error("שגיאה בטעינת הנתונים מהגיליון");
+  return data
+    .filter(r => r.voteId && /^\d+$/.test(r.voteId))
+    .map(r => ({ ...r, shortName: (r.shortName || r.short_name || "").trim() }));
+}
+
+async function fetchVoteDetails(voteId) {
+  for (const base of API_BASES) {
+    try {
+      const r = await fetch(base + DETAIL_PATH + voteId, { mode: "cors" });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      if (data?.VoteDetails) return data;
+    } catch (_) {}
+    await sleep(180);
+  }
+  throw new Error(`נכשל לטעון הצבעה ${voteId}`);
+}
+
+async function loadData(bustCache = false) {
+  showScreen("loading");
+  document.getElementById("load-msg").textContent = "מתחבר לנתוני הכנסת…";
+  try {
+    if (bustCache) writeCache({});
+    const rows  = await fetchSheetRows();
+    if (!rows.length) throw new Error("לא נמצאו הצבעות בגיליון");
+    const cache = readCache();
+    const games = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const { voteId } = rows[i];
+      document.getElementById("load-msg").textContent = `טוען הצבעה ${i + 1} / ${rows.length}…`;
+      if (cache[voteId]) { games.push(cache[voteId]); continue; }
+      try {
+        const data   = await fetchVoteDetails(voteId);
+        const header = data.VoteHeader?.[0] || {};
+        const members = (data.VoteDetails || [])
+          .filter(d => normalizeVote(d.Title))
+          .map(d => ({
+            name:    (d.MkName || "").trim(),
+            vote:    normalizeVote(d.Title),
+            faction: (d.FactionName || "").trim(),
+          }));
+        if (members.length < 3) continue;
+        const game = {
+          voteId,
+          title:     header.ItemTitle   || "ללא כותרת",
+          shortName: rows[i].shortName  || "",
+          date:      header.VoteDateStr || "",
+          decision:  header.Decision    || "",
+          members,
+        };
+        cache[voteId] = game;
+        games.push(game);
+      } catch (e) { console.warn("Skip", voteId, e.message); }
+    }
+
+    writeCache(cache);
+    allGames = games;
+    if (!allGames.length) throw new Error("לא נמצאו הצבעות תקינות");
+    showScreen("home");
+  } catch (e) {
+    document.getElementById("error-msg").textContent = e.message;
+    showScreen("error");
+  }
+}
+
+// ══════════════════════════════════════════════
+// VOTING FLOW
+// ══════════════════════════════════════════════
+let userVotes   = {};   // voteId -> 'for' | 'against' | 'abstain'
+let userOrientation = null;
+let voteQueue   = [];   // array of game objects
+let currentIdx  = 0;
+let locked      = false;
+
+function selectOrientation(choice) {
+  userOrientation = choice;
+  startVoting();
+}
+
+function startVoting() {
+  userVotes  = {};
+  userOrientation = null;
+  voteQueue  = shuffle([...allGames]).slice(0, 10);
+  currentIdx = 0;
+  locked     = false;
+  showScreen("vote");
+  renderVoteCard(true);
+}
+
+function renderVoteCard(first = false) {
+  if (currentIdx >= voteQueue.length) { computeResults(); return; }
+  const game = voteQueue[currentIdx];
+  const total = voteQueue.length;
+
+  document.getElementById("vote-counter").textContent  = `${currentIdx + 1} / ${total}`;
+  document.getElementById("vote-progress").style.width = `${(currentIdx / total) * 100}%`;
+  document.getElementById("vote-num-badge").textContent = `הצבעה #${currentIdx + 1}`;
+  document.getElementById("vote-topic-title").textContent = game.shortName || game.title;
+
+  const meta = document.getElementById("vote-topic-meta");
+  meta.innerHTML = "";
+  if (game.date) {
+    const p = document.createElement("span");
+    p.className = "meta-pill"; p.textContent = "📅 " + game.date;
+    meta.appendChild(p);
+  }
+
+  const card = document.getElementById("vote-card");
+  card.classList.remove("animate-in");
+  void card.offsetWidth;
+  if (!first) card.classList.add("animate-in");
+}
+
+function castVote(choice) {
+  if (locked) return;
+  locked = true;
+
+  const game = voteQueue[currentIdx];
+  userVotes[game.voteId] = choice;
+
+  // Flash
+  const flash = document.getElementById("tap-flash");
+  flash.className = `tap-flash ${choice}-flash active`;
+  setTimeout(() => { flash.classList.remove("active"); }, 400);
+
+  setTimeout(() => {
+    currentIdx++;
+    locked = false;
+    renderVoteCard(false);
+  }, 200);
+}
+
+function showHome() { showScreen("home"); }
+
+// ══════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════
+function computeResults() {
+  // Build per-MK score map
+  const mkMap = {};   // name -> { name, faction, match, total, votesByVoteId }
+
+  allGames.forEach(game => {
+    const userChoice = userVotes[game.voteId];
+    if (!userChoice) return;
+
+    game.members.forEach(m => {
+      if (!mkMap[m.name]) {
+        mkMap[m.name] = { name: m.name, faction: m.faction, match: 0, total: 0, votesByVoteId: {} };
+      }
+      const mk = mkMap[m.name];
+      mk.total++;
+      mk.votesByVoteId[game.voteId] = m.vote;
+      if (m.vote === userChoice) mk.match++;
+    });
+  });
+
+  // For games where MK is absent — count as mismatch (already handled: total++ only when member exists)
+  // But spec says absent = mismatch, so add missing games to total
+  allGames.forEach(game => {
+    const userChoice = userVotes[game.voteId];
+    if (!userChoice) return;
+    Object.values(mkMap).forEach(mk => {
+      if (!(game.voteId in mk.votesByVoteId)) {
+        mk.total++;
+        mk.votesByVoteId[game.voteId] = null; // absent = mismatch
+      }
+    });
+  });
+
+  const sorted = Object.values(mkMap)
+    .filter(mk => mk.total > 0)
+    .sort((a, b) => (b.match / b.total) - (a.match / a.total));
+
+  const perfect = sorted.filter(mk => mk.match === mk.total);
+  const rest    = sorted.filter(mk => mk.match < mk.total);
+  const ranked  = perfect.length > 0
+    ? [...perfect, ...rest.slice(0, Math.max(0, 5 - perfect.length))]
+    : rest.slice(0, 5);
+
+  renderResults(ranked);
+}
+
+const voteLabel  = { for: "בעד",  against: "נגד", abstain: "נמנע" };
+const voteClass  = { for: "for",  against: "against", abstain: "abstain" };
+
+function renderResults(ranked) {
+  showScreen("results");
+
+  // MK cards
+  const container = document.getElementById("mk-cards");
+  container.innerHTML = "";
+
+  ranked.forEach((mk, i) => {
+    const pct = Math.round((mk.match / mk.total) * 100);
+    const pctClass = pct >= 70 ? "" : pct >= 50 ? "pct-mid" : "pct-low";
+    const barClass  = pct >= 70 ? "" : pct >= 50 ? "mid" : "low";
+    const isTop = i === 0;
+
+    const card = document.createElement("div");
+    card.className = "mk-card";
+
+    // Build vote rows HTML
+    const voteRowsHTML = allGames.map(game => {
+      const userChoice = userVotes[game.voteId];
+      if (!userChoice) return "";
+      const mkVote  = mk.votesByVoteId[game.voteId];
+      const topicName = game.shortName || game.title;
+      const match  = mkVote === userChoice;
+      const dot    = mkVote ? (match ? "✅" : "❌") : "❌";
+      const mkBadgeClass = mkVote ? `badge-${voteClass[mkVote]}` : "badge-missing";
+      const mkLabelTxt   = mkVote ? voteLabel[mkVote] : "לא הצביע";
+      const userBadgeClass = `badge-${voteClass[userChoice]}`;
+
+      return `
+        <div class="vote-row">
+          <div class="vote-row-topic">${esc(topicName)}</div>
+          <div class="vote-row-badges">
+            <span class="badge-vote ${userBadgeClass}" title="הצבעתך">${voteLabel[userChoice]}</span>
+            <span class="match-dot">${dot}</span>
+            <span class="badge-vote ${mkBadgeClass}" title="הצביע ${esc(mk.name)}">${esc(mkLabelTxt)}</span>
+          </div>
+        </div>`;
+    }).join("");
+
+    card.innerHTML = `
+      <div class="mk-card-top">
+        <div class="mk-rank ${isTop ? "top1" : ""}">${i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1)}</div>
+        <div class="mk-avatar">👤</div>
+        <div class="mk-info">
+          <div class="mk-name-big">${esc(mk.name)}</div>
+          <span class="mk-faction-tag">${esc(mk.faction || "—")}</span>
+        </div>
+        <div class="mk-match-score">
+          <div class="match-pct ${pctClass}">${pct}%</div>
+          <div class="match-count">${mk.match}/${mk.total}</div>
+        </div>
+      </div>
+      <div class="mk-match-bar-wrap">
+        <div class="mk-match-bar-fill ${barClass}" style="width:0%" data-pct="${pct}"></div>
+      </div>
+      <button class="mk-votes-toggle" onclick="toggleDetail(this)">
+        <span>פירוט הצבעות</span>
+        <span class="toggle-arrow">▼</span>
+      </button>
+      <div class="mk-votes-detail">${voteRowsHTML}</div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  // Animate bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll(".mk-match-bar-fill").forEach(bar => {
+        bar.style.width = bar.dataset.pct + "%";
+      });
+    }, 100);
+  });
+
+  // My summary
+  const summaryEl = document.getElementById("my-summary");
+  const myRows = allGames.map(game => {
+    const choice = userVotes[game.voteId];
+    if (!choice) return "";
+    return `
+      <div class="my-vote-row">
+        <div class="my-vote-topic">${esc(game.shortName || game.title)}</div>
+        <span class="my-vote-badge badge-${voteClass[choice]}">${voteLabel[choice]}</span>
+      </div>`;
+  }).join("");
+
+  summaryEl.innerHTML = `
+    <div class="my-summary-title">ההצבעות שלך</div>
+    <div class="my-votes-grid">${myRows}</div>`;
+
+  // WhatsApp share
+  const top = ranked[0];
+  const topPct = top ? Math.round((top.match / top.total) * 100) : 0;
+  const shareText = encodeURIComponent(
+    `גיליתי שח"כ ${top?.name || "?"} מצביע ${topPct}% כמוני! 🏛️\nגלה גם אתה מי אתה בכנסת:\nhttps://gil1feldman.github.io/swipe_knesset/`
+  );
+  document.getElementById("whatsapp-btn").onclick = () =>
+    window.open("https://wa.me/?text=" + shareText, "_blank");
+
+  // Subtitle
+  document.getElementById("results-sub").textContent =
+    `השוויתי את הצבעותיך ל-${Object.keys(readMkMapForCount()).length} חברי כנסת`;
+}
+
+function readMkMapForCount() {
+  const mk = {};
+  allGames.forEach(g => g.members.forEach(m => { mk[m.name] = true; }));
+  return mk;
+}
+
+function toggleDetail(btn) {
+  const detail = btn.nextElementSibling;
+  const arrow  = btn.querySelector(".toggle-arrow");
+  const open   = detail.classList.toggle("open");
+  arrow.classList.toggle("open", open);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ══════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
