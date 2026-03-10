@@ -85,13 +85,13 @@ body::before {
 }
 
 .home-eyebrow {
-  font-size: 10px; letter-spacing: 5px; font-family: monospace;
+  font-size: 13px; letter-spacing: 5px; font-family: monospace;
   color: var(--gold); border: 1px solid var(--gold-line);
   padding: 3px 18px; border-radius: 2px; margin-bottom: 14px;
 }
 
 .home-title {
-  font-size: clamp(32px, 8vw, 52px);
+  font-size: clamp(42px, 10vw, 68px);
   font-weight: 900; line-height: 1.05;
   color: #fff;
   text-shadow: 0 0 60px rgba(201,168,76,0.25);
@@ -99,7 +99,7 @@ body::before {
 }
 
 .home-sub {
-  font-size: 15px; color: var(--text-soft); line-height: 1.6;
+  font-size: 18px; color: var(--text-soft); line-height: 1.6;
   max-width: 380px; margin-bottom: 28px;
 }
 
@@ -123,15 +123,15 @@ body::before {
 .how-row {
   display: flex; align-items: flex-start; gap: 12px;
 }
-.how-icon { font-size: 20px; flex-shrink: 0; padding-top: 1px; }
-.how-text { font-size: 13px; color: var(--text-soft); line-height: 1.6; }
+.how-icon { font-size: 24px; flex-shrink: 0; padding-top: 1px; }
+.how-text { font-size: 16px; color: var(--text-soft); line-height: 1.6; }
 .how-text strong { color: var(--text-main); }
 
 .btn-start {
-  width: 100%; padding: 16px;
+  width: 100%; padding: 18px;
   background: linear-gradient(135deg, #1a3a80, #2563eb);
   border: none; border-radius: 14px;
-  color: #fff; font-size: 17px; font-weight: 800;
+  color: #fff; font-size: 20px; font-weight: 800;
   font-family: inherit; cursor: pointer;
   box-shadow: 0 8px 32px rgba(37,99,235,0.35);
   transition: transform 0.15s, box-shadow 0.15s;
@@ -157,7 +157,7 @@ body::before {
   margin-bottom: 10px; flex-shrink: 0;
 }
 .vote-counter {
-  font-size: 11px; font-family: monospace; letter-spacing: 1px;
+  font-size: 14px; font-family: monospace; letter-spacing: 1px;
   color: var(--text-mute);
 }
 .vote-progress-track {
@@ -191,18 +191,18 @@ body::before {
 
 .vote-num-badge {
   display: inline-block; align-self: flex-end;
-  font-size: 10px; font-family: monospace; letter-spacing: 2px;
+  font-size: 13px; font-family: monospace; letter-spacing: 2px;
   color: rgba(201,168,76,0.45); margin-bottom: 14px;
 }
 
 .vote-topic-label {
-  font-size: 9px; letter-spacing: 3px; font-family: monospace;
+  font-size: 12px; letter-spacing: 3px; font-family: monospace;
   color: rgba(201,168,76,0.5); margin-bottom: 7px;
   text-align: center;
 }
 
 .vote-topic-title {
-  font-size: clamp(16px, 4.5vw, 22px);
+  font-size: clamp(22px, 5.5vw, 30px);
   font-weight: 800; line-height: 1.4;
   color: #fff; text-align: center;
   flex: 1; display: flex; align-items: center; justify-content: center;
@@ -215,7 +215,7 @@ body::before {
   flex-wrap: wrap;
 }
 .meta-pill {
-  font-size: 11px; padding: 2px 11px; border-radius: 20px;
+  font-size: 14px; padding: 3px 13px; border-radius: 20px;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.09);
   color: var(--text-mute);
@@ -227,14 +227,14 @@ body::before {
   flex-shrink: 0;
 }
 .vbtn {
-  flex: 1; padding: 14px 8px;
+  flex: 1; padding: 18px 8px;
   border: 1.5px solid; border-radius: 14px;
-  font-family: inherit; font-size: 15px; font-weight: 800;
+  font-family: inherit; font-size: 20px; font-weight: 800;
   cursor: pointer; transition: all 0.14s;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
 .vbtn:active { transform: scale(0.93); }
-.vbtn-label { font-size: 11px; font-weight: 600; opacity: 0.75; }
+.vbtn-label { font-size: 14px; font-weight: 600; opacity: 0.75; }
 .vbtn-for     { background: var(--for-bg);     border-color: rgba(34,197,94,0.4);  color: #86efac; }
 .vbtn-abstain { background: var(--abstain-bg);  border-color: rgba(245,158,11,0.35); color: #fde68a; }
 .vbtn-against { background: var(--against-bg); border-color: rgba(239,68,68,0.4);  color: #fca5a5; }
@@ -274,7 +274,7 @@ body::before {
   text-shadow: 0 0 40px rgba(201,168,76,0.35);
   margin-bottom: 6px;
 }
-.results-sub { font-size: 14px; color: var(--text-soft); }
+.results-sub { font-size: 16px; color: var(--text-soft); }
 
 /* MK match cards */
 .mk-cards { display: flex; flex-direction: column; gap: 12px; }
@@ -315,10 +315,10 @@ body::before {
 }
 
 .mk-info { flex: 1; min-width: 0; }
-.mk-name-big { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+.mk-name-big { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; }
 .mk-faction-tag {
   display: inline-block; margin-top: 4px;
-  font-size: 11px; padding: 1px 10px; border-radius: 20px;
+  font-size: 13px; padding: 2px 12px; border-radius: 20px;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
   color: var(--text-soft);
 }
@@ -327,12 +327,12 @@ body::before {
   text-align: center; flex-shrink: 0;
 }
 .match-pct {
-  font-size: 26px; font-weight: 900; font-family: monospace;
+  font-size: 32px; font-weight: 900; font-family: monospace;
   color: var(--for-color); line-height: 1;
 }
 .match-pct.pct-mid { color: var(--abstain-color); }
 .match-pct.pct-low { color: var(--text-soft); }
-.match-count { font-size: 11px; color: var(--text-mute); margin-top: 2px; }
+.match-count { font-size: 13px; color: var(--text-mute); margin-top: 2px; }
 
 /* Match bar */
 .mk-match-bar-wrap {
@@ -350,11 +350,11 @@ body::before {
 /* Votes breakdown accordion */
 .mk-votes-toggle {
   width: 100%; background: transparent; border: none; border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 10px 18px; color: var(--text-mute); font-size: 12px; font-family: inherit;
+  padding: 12px 18px; color: var(--text-mute); font-size: 14px; font-family: inherit;
   cursor: pointer; text-align: right; display: flex; align-items: center; justify-content: space-between;
 }
 .mk-votes-toggle:hover { color: var(--text-soft); }
-.toggle-arrow { transition: transform 0.25s; font-size: 10px; }
+.toggle-arrow { transition: transform 0.25s; font-size: 12px; }
 .toggle-arrow.open { transform: rotate(180deg); }
 
 .mk-votes-detail {
@@ -369,19 +369,19 @@ body::before {
   gap: 10px;
 }
 .vote-row:last-child { border-bottom: none; }
-.vote-row-topic { font-size: 12px; color: var(--text-soft); flex: 1; line-height: 1.4; }
+.vote-row-topic { font-size: 14px; color: var(--text-soft); flex: 1; line-height: 1.4; }
 .vote-row-badges {
   display: flex; gap: 5px; flex-shrink: 0; align-items: center;
 }
 .badge-vote {
-  font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; padding: 3px 11px; border-radius: 20px;
   font-family: monospace;
 }
 .badge-for     { background: var(--for-bg);     color: #86efac; border: 1px solid rgba(34,197,94,0.25); }
 .badge-against { background: var(--against-bg); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
 .badge-abstain { background: var(--abstain-bg); color: #fde68a; border: 1px solid rgba(245,158,11,0.2); }
 .badge-missing { background: rgba(255,255,255,0.04); color: var(--text-mute); border: 1px solid rgba(255,255,255,0.08); }
-.match-dot { font-size: 13px; }
+.match-dot { font-size: 15px; }
 
 /* Summary box */
 .my-summary {
@@ -390,7 +390,7 @@ body::before {
   border-radius: 16px; padding: 18px 20px;
 }
 .my-summary-title {
-  font-size: 12px; letter-spacing: 2px; font-family: monospace;
+  font-size: 14px; letter-spacing: 2px; font-family: monospace;
   color: rgba(201,168,76,0.6); margin-bottom: 12px;
 }
 .my-votes-grid {
@@ -399,34 +399,34 @@ body::before {
 .my-vote-row {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
 }
-.my-vote-topic { font-size: 12px; color: var(--text-soft); flex: 1; line-height: 1.4; }
-.my-vote-badge { font-size: 11px; font-weight: 700; padding: 2px 11px; border-radius: 20px; font-family: monospace; }
+.my-vote-topic { font-size: 14px; color: var(--text-soft); flex: 1; line-height: 1.4; }
+.my-vote-badge { font-size: 13px; font-weight: 700; padding: 3px 13px; border-radius: 20px; font-family: monospace; }
 
 /* Action buttons */
 .result-btns { display: flex; gap: 10px; }
 .btn-secondary {
-  flex: 1; padding: 13px;
+  flex: 1; padding: 15px;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px; color: var(--text-soft);
-  font-family: inherit; font-size: 14px; font-weight: 700;
+  font-family: inherit; font-size: 16px; font-weight: 700;
   cursor: pointer; transition: all 0.14s;
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .btn-primary {
-  flex: 1; padding: 13px;
+  flex: 1; padding: 15px;
   background: linear-gradient(135deg, #1a3a80, #2563eb);
   border: none; border-radius: 12px; color: #fff;
-  font-family: inherit; font-size: 14px; font-weight: 800;
+  font-family: inherit; font-size: 16px; font-weight: 800;
   cursor: pointer; transition: all 0.14s;
   box-shadow: 0 4px 20px rgba(37,99,235,0.3);
 }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(37,99,235,0.4); }
 
 .whatsapp-btn {
-  width: 100%; padding: 14px;
+  width: 100%; padding: 16px;
   background: linear-gradient(135deg, #128C7E, #25D366);
   border: none; border-radius: 12px; color: #fff;
-  font-family: inherit; font-size: 15px; font-weight: 800;
+  font-family: inherit; font-size: 17px; font-weight: 800;
   cursor: pointer; transition: all 0.14s;
   box-shadow: 0 4px 20px rgba(37,211,102,0.25);
 }
@@ -454,22 +454,22 @@ body::before {
   display: flex; flex-direction: column; align-items: center; gap: 0;
 }
 .orient-question {
-  font-size: clamp(20px, 5vw, 28px); font-weight: 800;
+  font-size: clamp(24px, 6vw, 34px); font-weight: 800;
   color: #fff; text-align: center; line-height: 1.4;
   margin-bottom: 8px;
 }
 .orient-sub {
-  font-size: 13px; color: var(--text-mute); margin-bottom: 28px;
+  font-size: 15px; color: var(--text-mute); margin-bottom: 28px;
 }
 .orient-options {
   width: 100%; display: flex; flex-direction: column; gap: 10px;
 }
 .orient-btn {
-  width: 100%; padding: 14px 20px;
+  width: 100%; padding: 16px 22px;
   background: rgba(255,255,255,0.04);
   border: 1.5px solid rgba(255,255,255,0.1);
   border-radius: 14px; color: var(--text-main);
-  font-family: inherit; font-size: 15px; font-weight: 700;
+  font-family: inherit; font-size: 17px; font-weight: 700;
   cursor: pointer; text-align: right;
   transition: all 0.14s; display: flex; align-items: center; gap: 12px;
 }
