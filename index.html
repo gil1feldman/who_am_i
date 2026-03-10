@@ -520,7 +520,7 @@ body::before {
 
   <!-- HOME -->
   <div id="screen-home" class="screen">
-    <div class="center-screen">
+    <div style="overflow-y:auto;flex:1;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px 40px">
       <div class="home-inner">
         <div class="home-emblem">🏛️</div>
         <div class="home-eyebrow">כנסת ישראל</div>
@@ -975,9 +975,7 @@ function renderResults(ranked) {
   document.getElementById("whatsapp-btn").onclick = () =>
     window.open("https://wa.me/?text=" + shareText, "_blank");
 
-  // Subtitle
-  document.getElementById("results-sub").textContent =
-    `השוויתי את הצבעותיך ל-${Object.keys(readMkMapForCount()).length} חברי כנסת`;
+  document.getElementById("results-sub").textContent = "הנה חברי הכנסת שמצביעים הכי דומה לך";
 }
 
 function readMkMapForCount() {
