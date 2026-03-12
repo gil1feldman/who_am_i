@@ -665,7 +665,7 @@ body::after {
 <div class="tap-flash" id="tap-flash"></div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7mtU_4w7tz6Iz4VPAkO5eUdEnil2PsiLpo17zscAJNxMJml7p5qBr9wJifIgiYlpy/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5ZQ_lo5GmCFWGf1hoT-CSug-kemz4prwnVz2y6N0Awqj-Oies4xeoiok2FyDaH1EL/exec";
 const API_BASES = [
   "https://www.knesset.gov.il",
   "https://knesset.gov.il",
@@ -692,6 +692,7 @@ function showScreen(id) {
 }
 
 let allGames = [];
+let gameStartTime = null;
 
 function normalizeVote(t) {
   if (!t) return null;
@@ -792,11 +793,11 @@ function selectOrientation(choice) {
 }
 
 function startVoting() {
-  userVotes  = {};
-  userOrientation = null;
-  voteQueue  = shuffle([...allGames]).slice(0, 10);
-  currentIdx = 0;
-  locked     = false;
+  userVotes       = {};
+  voteQueue       = shuffle([...allGames]).slice(0, 10);
+  currentIdx      = 0;
+  locked          = false;
+  gameStartTime   = Date.now();
   showScreen("vote");
   renderVoteCard(true);
 }
@@ -844,8 +845,29 @@ function castVote(choice) {
 
 function showHome() { showScreen("home"); }
 
+// ── SUBMIT TO SHEET ──
+function submitResults() {
+  const duration = Math.round((Date.now() - gameStartTime) / 1000);
+  const votes = voteQueue.map(game => ({
+    title:    game.shortName || game.title,
+    userVote: userVotes[game.voteId] || "",
+  }));
+
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      game:             "who_am_i",
+      orientation:      userOrientation || "",
+      duration_seconds: duration,
+      votes,
+    }),
+  }).catch(e => console.warn("שגיאה בשמירת תוצאות:", e));
+}
+
 // ── RESULTS ──
 function computeResults() {
+  submitResults();
+
   const mkMap = {};
 
   allGames.forEach(game => {
@@ -876,9 +898,9 @@ function computeResults() {
   const sorted = Object.values(mkMap)
     .filter(mk => mk.total > 0)
     .sort((a, b) => {
-  const diff = (b.match / b.total) - (a.match / a.total);
-  return diff !== 0 ? diff : Math.random() - 0.5;
-});
+      const diff = (b.match / b.total) - (a.match / a.total);
+      return diff !== 0 ? diff : Math.random() - 0.5;
+    });
 
   const perfect = sorted.filter(mk => mk.match === mk.total);
   const rest    = sorted.filter(mk => mk.match < mk.total);
