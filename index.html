@@ -875,7 +875,10 @@ function computeResults() {
 
   const sorted = Object.values(mkMap)
     .filter(mk => mk.total > 0)
-    .sort((a, b) => (b.match / b.total) - (a.match / a.total));
+    .sort((a, b) => {
+  const diff = (b.match / b.total) - (a.match / a.total);
+  return diff !== 0 ? diff : Math.random() - 0.5;
+});
 
   const perfect = sorted.filter(mk => mk.match === mk.total);
   const rest    = sorted.filter(mk => mk.match < mk.total);
