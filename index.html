@@ -517,7 +517,10 @@ body::after {
       <div class="load-logo-bar"><span></span><span></span><span></span></div>
       <div style="color:var(--navy);font-size:24px;font-weight:900">מי אני בכנסת?</div>
       <div class="spinner"></div>
-      <div id="load-msg" class="load-msg">טוען נתונים…</div>
+      <div class="load-msg">טוען את המשחק…</div>
+      <div style="width:220px;height:4px;background:rgba(26,35,126,0.1);border-radius:4px;overflow:hidden;margin-top:4px">
+        <div id="load-progress-fill" style="height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--lime));transition:width 0.35s ease"></div>
+      </div>
     </div>
   </div>
 
@@ -721,19 +724,25 @@ async function fetchVoteDetails(voteId) {
   throw new Error(`נכשל לטעון הצבעה ${voteId}`);
 }
 
+function setLoadProgress(pct) {
+  const fill = document.getElementById("load-progress-fill");
+  if (fill) fill.style.width = Math.round(pct) + "%";
+}
+
 async function loadData(bustCache = false) {
   showScreen("loading");
-  document.getElementById("load-msg").textContent = "מתחבר לנתוני הכנסת…";
+  setLoadProgress(0);
   try {
     if (bustCache) writeCache({});
     const rows  = await fetchSheetRows();
     if (!rows.length) throw new Error("לא נמצאו הצבעות בגיליון");
+    setLoadProgress(10);
     const cache = readCache();
     const games = [];
 
     for (let i = 0; i < rows.length; i++) {
       const { voteId } = rows[i];
-      document.getElementById("load-msg").textContent = `טוען הצבעה ${i + 1} / ${rows.length}…`;
+      setLoadProgress(10 + ((i + 1) / rows.length) * 88);
       if (cache[voteId]) { games.push(cache[voteId]); continue; }
       try {
         const data   = await fetchVoteDetails(voteId);
@@ -762,7 +771,8 @@ async function loadData(bustCache = false) {
     writeCache(cache);
     allGames = games;
     if (!allGames.length) throw new Error("לא נמצאו הצבעות תקינות");
-    showScreen("home");
+    setLoadProgress(100);
+    setTimeout(() => showScreen("home"), 300);
   } catch (e) {
     document.getElementById("error-msg").textContent = e.message;
     showScreen("error");
